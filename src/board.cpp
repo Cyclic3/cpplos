@@ -162,16 +162,17 @@ namespace cpplos {
     board::coord_t ret;
     auto start = &str.front();
     for (size_t i = 0; true; ++i) {
-       auto res = std::from_chars(start, &str.back() + 1, ret[i]);
-       if (res.ec != std::errc{})
-         throw parsing_error{"Coord integer parsing error"};
+      ret[i] = parse<uint16_t>(str);
+      auto res = std::from_chars(start, &str.back() + 1, ret[i]);
+      if (res.ec != std::errc{})
+        throw parsing_error{"Coord integer parsing error"};
 
-       if (i == 2)
-         return ret;
+      if (i == 2)
+        return ret;
 
-       start = res.ptr + 1;
-       if (start > &str.back())
-         throw parsing_error{"Coords to short"};
+      start = res.ptr + 1;
+      if (start > &str.back())
+        throw parsing_error{"Coords to short"};
     }
   }
 

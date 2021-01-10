@@ -4,6 +4,7 @@
 #include <cpplos/commands.hpp>
 
 #include <cppthings/defer.hpp>
+#include <cppthings/sfinae.hpp>
 
 #include <charconv>
 #include <iostream>
@@ -14,12 +15,16 @@ namespace cpplos {
   public:
     board board;
 
+  private:
+    template<typename T, typename = typename std::enable_if_t<cppthings::is_in_variant_v<T, command_t>>>
+    void handle_message_inner(T const&, message_t const& all_moves, board::cell side);
+
   public:
     board::cell winner() const noexcept {
       return board.get_apex();
     }
 
-    void do_move(move_t const& move, board::cell side);
+    void handle_message(const message_t& move, board::cell side);
 
     [[nodiscard]]
     inline bool try_place(board::coord_t position, board::cell colour) noexcept {
